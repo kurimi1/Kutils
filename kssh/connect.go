@@ -1,17 +1,20 @@
-package ssh
+package kssh
 
 import (
 	"fmt"
 	"strings"
 	"time"
 
-	"github.com/kurimi1/Kutils/file"
+	"github.com/kurimi1/Kutils/kfile"
 	"golang.org/x/crypto/ssh"
 )
 
 // privateKeyMethod returns AuthMethod that uses the pk.
 func (ss *SSH) privateKeyMethod(pkFile, pkPassword string) (am ssh.AuthMethod, err error) {
-	pkData := file.ReadFile(pkFile)
+	pkData, err := kfile.ReadFile(pkFile)
+	if err != nil {
+		return nil, err
+	}
 	var pk ssh.Signer
 	if pkPassword == "" {
 		pk, err = ssh.ParsePrivateKey(pkData)
@@ -37,7 +40,7 @@ func (ss *SSH) passwordMethod(passwd string) ssh.AuthMethod {
 // authMethods returns a list of authentication methods.
 func (ss *SSH) authMethod(passwd, pkFile, pkPasswd string) (auth []ssh.AuthMethod) {
 	// if pkfile is not empty
-	if file.FileExist(pkFile) {
+	if kfile.FileExist(pkFile) {
 		am, err := ss.privateKeyMethod(pkFile, pkPasswd)
 		if err == nil {
 			auth = append(auth, am)

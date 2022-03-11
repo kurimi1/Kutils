@@ -1,13 +1,11 @@
-package ssh
+package kssh
 
 import (
 	"testing"
 	"time"
-
-	"golang.org/x/crypto/ssh"
 )
 
-func TestSSH_NewSession(t *testing.T) {
+func TestSSH_Copy(t *testing.T) {
 	type fields struct {
 		User       string
 		Password   string
@@ -16,29 +14,30 @@ func TestSSH_NewSession(t *testing.T) {
 		Timeout    time.Duration
 	}
 	type args struct {
-		host string
+		host           string
+		localFilePath  string
+		remoteFilePath string
 	}
 	tests := []struct {
-		name    string
-		fields  fields
-		args    args
-		want    *ssh.Session
-		wantErr bool
+		name   string
+		fields fields
+		args   args
 	}{
 		// TODO: Add test cases.
 		{
 			name: "test",
 			fields: fields{
-				User:       "root",
+				User:       "g",
 				Password:   "Kn@999+.",
 				PkFile:     "",
 				PkPassword: "",
 				Timeout:    time.Second * 10,
 			},
 			args: args{
-				host: "10.67.15.212",
+				host:           "10.67.15.216",
+				localFilePath:  "./ssh.go",
+				remoteFilePath: "/home/g/ssh.go",
 			},
-			wantErr: false,
 		},
 	}
 	for _, tt := range tests {
@@ -50,12 +49,7 @@ func TestSSH_NewSession(t *testing.T) {
 				PkPassword: tt.fields.PkPassword,
 				Timeout:    tt.fields.Timeout,
 			}
-			got, err := ss.NewSession(tt.args.host)
-			t.Logf("%v", got)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("SSH.NewSession() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
+			ss.Copy(tt.args.host, tt.args.localFilePath, tt.args.remoteFilePath)
 		})
 	}
 }

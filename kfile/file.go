@@ -1,18 +1,16 @@
-package file
+package kfile
 
 import (
 	"io/ioutil"
-	"log"
 	"os"
 )
 
-func ReadFile(name string) []byte {
+func ReadFile(name string) ([]byte, error) {
 	content, err := ioutil.ReadFile(name)
 	if err != nil {
-		log.Fatalf("read %s file err is : %s", name, err)
-		os.Exit(1)
+		return nil, err
 	}
-	return content
+	return content, nil
 }
 
 func FileExist(path string) bool {
